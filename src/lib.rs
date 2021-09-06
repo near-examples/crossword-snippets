@@ -53,5 +53,18 @@ mod tests {
         builder
     }
 
-    // TESTS HERE
+    #[test]
+    fn debug_get_hash() {
+        // Basic set up for a unit test
+        testing_env!(VMContextBuilder::new().build());
+
+        // Using a unit test to rapidly debug and iterate
+        let debug_solution = "near nomicon ref finance";
+        let debug_hash_bytes = env::sha256(debug_solution.as_bytes());
+        let debug_byte_array: Vec<String> = debug_hash_bytes.iter()
+            .map(|b| format!("{:02X}", b))
+            .collect();
+        let debug_hash_string = debug_byte_array.join("");
+        println!("Let's debug: {:02X?}", debug_hash_string);
+    }
 }
