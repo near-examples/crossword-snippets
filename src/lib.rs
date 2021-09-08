@@ -39,7 +39,7 @@ impl Contract {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use near_sdk::test_utils::VMContextBuilder;
+    use near_sdk::test_utils::{VMContextBuilder, get_logs};
     use near_sdk::{testing_env, AccountId};
 
     // part of writing unit tests is setting up a mock context
@@ -64,5 +64,23 @@ mod tests {
             .collect();
         let debug_hash_string = debug_byte_array.join("");
         println!("Let's debug: {:02X?}", debug_hash_string);
+    }
+
+    #[test]
+    fn check_guess_solution() {
+        // Get Alice as an account ID
+        let alice = AccountId::new_unchecked("alice.testnet".to_string());
+        // Set up the testing context and unit test environment
+        let context = get_context(alice);
+        testing_env!(context.build());
+
+        // Set up contract object and call methods
+        let mut contract = Contract::default();
+        // Set the solution to be the hash we determined from the previous, helper unit test
+        contract.set_solution("69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string());
+        contract.guess_solution("wrong answer here".to_string());
+        assert_eq!(get_logs(), ["Try again."], "Expected a failure log.");
+        contract.guess_solution("69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string());
+        assert_eq!(get_logs(), ["Try again.", "You guessed right!"], "Expected a successful log after the previous failed log.");
     }
 }
