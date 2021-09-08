@@ -39,7 +39,7 @@ impl Contract {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use near_sdk::test_utils::{VMContextBuilder, get_logs};
+    use near_sdk::test_utils::{get_logs, VMContextBuilder};
     use near_sdk::{testing_env, AccountId};
 
     // part of writing unit tests is setting up a mock context
@@ -77,10 +77,18 @@ mod tests {
         // Set up contract object and call methods
         let mut contract = Contract::default();
         // Set the solution to be the hash we determined from the previous, helper unit test
-        contract.set_solution("69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string());
+        contract.set_solution(
+            "69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string(),
+        );
         contract.guess_solution("wrong answer here".to_string());
         assert_eq!(get_logs(), ["Try again."], "Expected a failure log.");
-        contract.guess_solution("69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string());
-        assert_eq!(get_logs(), ["Try again.", "You guessed right!"], "Expected a successful log after the previous failed log.");
+        contract.guess_solution(
+            "69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string(),
+        );
+        assert_eq!(
+            get_logs(),
+            ["Try again.", "You guessed right!"],
+            "Expected a successful log after the previous failed log."
+        );
     }
 }
