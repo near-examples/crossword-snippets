@@ -65,7 +65,7 @@ mod tests {
         let debug_solution = "near nomicon ref finance";
         let debug_hash_bytes = env::sha256(debug_solution.as_bytes());
         let debug_hash_string = hex::encode(debug_hash_bytes);
-        println!("Let's debug: {:02X?}", debug_hash_string);
+        println!("Let's debug: {:?}", debug_hash_string);
     }
 
     #[test]
