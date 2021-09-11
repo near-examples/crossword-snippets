@@ -1,8 +1,6 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::{env, near_bindgen};
 
-const PUZZLE_NUMBER: u8 = 1;
-
 #[near_bindgen]
 #[derive(Default, BorshDeserialize, BorshSerialize)]
 pub struct Contract {
@@ -18,15 +16,17 @@ impl Contract {
         }
     }
 
-    pub fn get_puzzle_number(&self) -> u8 {
-        PUZZLE_NUMBER
+    pub fn get_solution(&self) -> String {
+        self.crossword_solution.clone()
     }
 
-    pub fn guess_solution(&mut self, solution: String) {
+    pub fn guess_solution(&mut self, solution: String) -> bool {
         if solution == self.crossword_solution {
-            env::log_str("You guessed right!")
+            env::log_str("You guessed right!");
+            true
         } else {
-            env::log_str("Try again.")
+            env::log_str("Try again.");
+            false
         }
     }
 }
