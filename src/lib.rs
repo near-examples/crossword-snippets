@@ -21,7 +21,10 @@ impl Contract {
     }
 
     pub fn guess_solution(&mut self, solution: String) -> bool {
-        if solution == self.crossword_solution {
+        let hashed_input = env::sha256(solution.as_bytes());
+        let hashed_input_hex = hex::encode(&hashed_input);
+
+        if hashed_input_hex == self.crossword_solution {
             env::log_str("You guessed right!");
             true
         } else {
@@ -61,11 +64,7 @@ mod tests {
         // Using a unit test to rapidly debug and iterate
         let debug_solution = "near nomicon ref finance";
         let debug_hash_bytes = env::sha256(debug_solution.as_bytes());
-        let debug_byte_array: Vec<String> = debug_hash_bytes
-            .iter()
-            .map(|b| format!("{:02X}", b))
-            .collect();
-        let debug_hash_string = debug_byte_array.join("");
+        let debug_hash_string = hex::encode(debug_hash_bytes);
         println!("Let's debug: {:02X?}", debug_hash_string);
     }
 
@@ -77,17 +76,15 @@ mod tests {
         let context = get_context(alice);
         testing_env!(context.build());
 
-        // Set up contract object and call methods
-        let mut contract = Contract::default();
-        // Set the solution to be the hash we determined from the previous, helper unit test
-        contract.set_solution(
-            "69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string(),
+        // Set up contract object and call the new method
+        let mut contract = Contract::new(
+            "69c2feb084439956193f4c21936025f14a5a5a78979d67ae34762e18a7206a0f".to_string(),
         );
-        contract.guess_solution("wrong answer here".to_string());
+        let mut guess_result = contract.guess_solution("wrong answer here".to_string());
+        assert!(!guess_result, "Expected a failure from the wrong guess");
         assert_eq!(get_logs(), ["Try again."], "Expected a failure log.");
-        contract.guess_solution(
-            "69C2FEB084439956193F4C21936025F14A5A5A78979D67AE34762E18A7206A0F".to_string(),
-        );
+        guess_result = contract.guess_solution("near nomicon ref finance".to_string());
+        assert!(guess_result, "Expected the correct answer to return true.");
         assert_eq!(
             get_logs(),
             ["Try again.", "You guessed right!"],
