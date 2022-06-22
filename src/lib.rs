@@ -1,8 +1,6 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::{near_bindgen, env};
 
-near_sdk::setup_alloc!();
-
 const PUZZLE_NUMBER: u8 = 1;
 
 #[near_bindgen]
@@ -23,9 +21,9 @@ impl Contract {
 
     pub fn guess_solution(&mut self, solution: String) {
         if solution == self.crossword_solution {
-            env::log(b"You guessed right!")
+            env::log_str("You guessed right!")
         } else {
-            env::log(b"Try again.")
+            env::log_str("Try again.")
         }
     }
 }
@@ -41,13 +39,11 @@ impl Contract {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use near_sdk::{MockedBlockchain, testing_env};
-    use near_sdk::test_utils::VMContextBuilder;
-    use near_sdk::json_types::ValidAccountId;
+    use near_sdk::{AccountId, test_utils::VMContextBuilder};
 
     // part of writing unit tests is setting up a mock context
     // provide a `predecessor` here, it'll modify the default context
-    fn get_context(predecessor: ValidAccountId) -> VMContextBuilder {
+    fn get_context(predecessor: AccountId) -> VMContextBuilder {
         let mut builder = VMContextBuilder::new();
         builder.predecessor_account_id(predecessor);
         builder
