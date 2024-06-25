@@ -1,15 +1,14 @@
-use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
-use near_sdk::{near_bindgen, env};
+use near_sdk::{near, env};
 
 const PUZZLE_NUMBER: u8 = 1;
 
-#[near_bindgen]
-#[derive(Default, BorshDeserialize, BorshSerialize)]
+#[near(contract_state)]
+#[derive(Default)]
 pub struct Contract {
     crossword_solution: String
 }
 
-#[near_bindgen]
+#[near]
 impl Contract {
     pub fn get_puzzle_number(&self) -> u8 {
         PUZZLE_NUMBER
